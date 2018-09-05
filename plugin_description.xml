@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<library path="lib/libcircle_tool_cursor">
+  <class name="rviz_tool_cursor/CircleToolCursor" type="rviz_tool_cursor::CircleToolCursor" base_class_type="rviz::Tool">
+    <description>
+      A cursor representing a circular tool that follows the geometry of mesh surfaces
+    </description>
+  </class>
+</library>
