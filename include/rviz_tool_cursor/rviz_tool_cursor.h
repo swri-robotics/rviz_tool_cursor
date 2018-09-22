@@ -8,7 +8,7 @@
 namespace Ogre
 {
   class SceneNode;
-  class ManualObject;
+  class MovableObject;
 }
 
 namespace rviz
@@ -42,13 +42,13 @@ public Q_SLOTS:
 
   void updateTopic();
 
-  void updateToolVisualization();
+  virtual void updateToolVisualization() = 0;
 
   void updatePatchSize();
 
 protected:
 
-  virtual Ogre::ManualObject* createToolVisualization() = 0;
+  virtual Ogre::MovableObject* createToolVisualization() = 0;
 
   QCursor std_cursor_;
 
@@ -56,7 +56,7 @@ protected:
 
   Ogre::SceneNode* cursor_node_;
 
-  const std::string ogre_object_name_ = "tool";
+  Ogre::MovableObject* movable_obj_;
 
   ros::NodeHandle nh_;
 

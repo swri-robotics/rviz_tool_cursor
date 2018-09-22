@@ -1,6 +1,6 @@
 #include <geometry_msgs/PointStamped.h>
 
-#include <OgreManualObject.h>
+#include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
 
 #include <rviz/display_context.h>
@@ -49,7 +49,8 @@ Eigen::Matrix3f createMatrix(const Eigen::Vector3f& norm)
   return mat;
 }
 
-Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points)
+Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
+                                const Ogre::Vector3& camera_norm)
 {
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
 
@@ -72,6 +73,16 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points)
   // (should be Z-axis, assuming points are relatively planar)
   Eigen::Vector3f norm = evecs.col(2);
   norm.normalize();
+
+  // The
+  Eigen::Vector3f camera_normal;
+  camera_normal << camera_norm.x, camera_norm.y, camera_norm.z;
+  camera_normal.normalize();
+
+  if(norm.dot(camera_normal) < 0)
+  {
+    norm *= -1;
+  }
 
   // Create a random orientation matrix with the normal being in the direction of the smalles eigenvector
   Eigen::Matrix3f mat = createMatrix(norm);
@@ -113,12 +124,7 @@ ToolCursor::ToolCursor()
 
 ToolCursor::~ToolCursor()
 {
-  if(cursor_node_ != nullptr)
-  {
-    cursor_node_->detachObject(ogre_object_name_);
-    scene_manager_->destroyManualObject(ogre_object_name_);
-    scene_manager_->destroySceneNode(cursor_node_);
-  }
+
 }
 
 void ToolCursor::onInitialize()
@@ -129,7 +135,7 @@ void ToolCursor::onInitialize()
     cursor_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
     // Create the visual tool object
-    Ogre::ManualObject* obj = createToolVisualization();
+    Ogre::MovableObject* obj = createToolVisualization();
 
     // Attach the tool visualization to the scene
     cursor_node_->attachObject(obj);
@@ -156,20 +162,6 @@ void ToolCursor::updateTopic()
   pub_ = nh_.advertise<geometry_msgs::PointStamped>(topic_property_->getStdString(), 1, true);
 }
 
-void ToolCursor::updateToolVisualization()
-{
-  // Remove and destroy the first tool visualization from the scene node
-  cursor_node_->detachObject(ogre_object_name_);
-  scene_manager_->destroyManualObject(ogre_object_name_);
-
-  // Create a new tool visualization
-  Ogre::ManualObject* obj = createToolVisualization();
-
-  // Attach the new tool visualization to the scene node
-  cursor_node_->attachObject(obj);
-  cursor_node_->setVisible(false);
-}
-
 int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
 {
   // Get the 3D point in space indicated by the mouse and a patch of points around it
@@ -179,15 +171,22 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
 
   const unsigned patch_size = static_cast<unsigned>(patch_size_property_->getInt());
 
-  if(context_->getSelectionManager()->get3DPoint(event.viewport, event.x, event.y, position) &&
-     context_->getSelectionManager()->get3DPatch(event.viewport, event.x, event.y, patch_size, patch_size, true, points) &&
-     points.size() > 3)
+  // Set the visibility of this node off so the selection manager won't choose a point on our cursor mesh in the point and patch
+  cursor_node_->setVisible(false);
+
+  bool got_point = context_->getSelectionManager()->get3DPoint(event.viewport, event.x, event.y, position);
+  bool got_patch = context_->getSelectionManager()->get3DPatch(event.viewport, event.x, event.y, patch_size, patch_size, true, points);
+
+  // Revisualize the cursor node
+  cursor_node_->setVisible(true);
+
+  if(got_point && got_patch && points.size() > 3)
   {
     // Set the cursor
     rviz::Tool::setCursor(hit_cursor_);
 
     // Estimate the surface normal from the patch of points
-    Ogre::Quaternion q = estimateNormal(points);
+    Ogre::Quaternion q = estimateNormal(points, event.viewport->getCamera()->getDirection());
     cursor_node_->setOrientation(q);
     cursor_node_->setPosition(position);
 
