@@ -15,7 +15,7 @@ catkin_package(
   INCLUDE_DIRS
     include
   LIBRARIES
-    circle_tool_cursor
+    tool_cursor
   CATKIN_DEPENDS
     rviz
     pluginlib
@@ -33,20 +33,22 @@ include_directories(
 
 # QT
 find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
-set(QT_LIBRARIES Qt5::Widgets)
+
 qt5_wrap_cpp(MOC_FILES
   include/${PROJECT_NAME}/rviz_tool_cursor.h
   src/circle_tool_cursor.h
+  src/mesh_tool_cursor.h
 )
 
-add_library(circle_tool_cursor
+add_library(tool_cursor
   src/${PROJECT_NAME}/rviz_tool_cursor.cpp
   src/circle_tool_cursor.cpp
+  src/mesh_tool_cursor.cpp
   ${MOC_FILES}
 )
-target_link_libraries(circle_tool_cursor
+target_link_libraries(tool_cursor
   ${catkin_LIBRARIES}
-  ${QT_LIBRARIES}
+  Qt5::Widgets
 )
 
 #############
