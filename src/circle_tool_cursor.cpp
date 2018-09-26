@@ -19,8 +19,7 @@ CircleToolCursor::CircleToolCursor()
 {
   radius_property_ = new rviz::FloatProperty("Tool Radius", 0.210f,
                                              "The radius of the tool circle display",
-                                             rviz::Tool::getPropertyContainer(), SLOT(updateToolVisualization()), this);
-
+                                             getPropertyContainer(), SLOT(updateToolVisualization()), this);
 }
 
 CircleToolCursor::~CircleToolCursor()

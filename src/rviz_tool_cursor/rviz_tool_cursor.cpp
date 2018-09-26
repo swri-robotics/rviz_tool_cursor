@@ -107,17 +107,18 @@ ToolCursor::ToolCursor()
 {
   shortcut_key_ = 'c';
 
+
   topic_property_ = new rviz::StringProperty("Topic", "/selection_point",
                                              "The topic on which to publish points",
-                                             rviz::Tool::getPropertyContainer(), SLOT(updateTopic()), this);
+                                             getPropertyContainer(), SLOT(updateTopic()), this);
 
   patch_size_property_ = new rviz::IntProperty("Patch Size", 10,
                                                "The number of pixels with which to estimate the surface normal",
-                                               rviz::Tool::getPropertyContainer());
+                                               getPropertyContainer());
 
   color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255),
                                             "The color of the tool visualization",
-                                            rviz::Tool::getPropertyContainer(), SLOT(updateToolVisualization()), this);
+                                            getPropertyContainer(), SLOT(updateToolVisualization()), this);
 
   updateTopic();
 }
