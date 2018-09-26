@@ -13,15 +13,16 @@
 #include <rviz/mesh_loader.h>
 
 const static std::string COLOR_NAME = "mesh_cursor_tool_color";
+const static std::string DEFAULT_MESH_RESOURCE = "package://rviz_tool_cursor/resources/default.stl";
 
 namespace rviz_tool_cursor
 {
 
 MeshToolCursor::MeshToolCursor()
 {
-  mesh_file_ = new rviz::StringProperty("Mesh Filename", "",
-                                         "The radius of the tool circle display",
-                                         rviz::Tool::getPropertyContainer(), SLOT(updateToolVisualization()), this);
+  mesh_file_ = new rviz::StringProperty("Mesh Filename", QString(DEFAULT_MESH_RESOURCE.c_str()),
+                                         "The mesh resource to display as a cursor",
+                                         getPropertyContainer(), SLOT(updateToolVisualization()), this);
 
   material_ = Ogre::MaterialManager::getSingletonPtr()->create(COLOR_NAME, "rviz");
 
@@ -50,7 +51,7 @@ Ogre::MovableObject* MeshToolCursor::createToolVisualization()
     ROS_WARN("Loading default mesh...");
 
     // Load a default mesh
-    mesh = rviz::loadMeshFromResource("package://rviz_tool_cursor/resources/default.stl");
+    mesh = rviz::loadMeshFromResource(DEFAULT_MESH_RESOURCE);
   }
 
   Ogre::Entity* entity = scene_manager_->createEntity(object_name_, mesh);
