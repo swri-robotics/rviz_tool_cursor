@@ -1,4 +1,4 @@
-#include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseStamped.h>
 
 #include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
@@ -160,7 +160,7 @@ void ToolCursor::deactivate()
 
 void ToolCursor::updateTopic()
 {
-  pub_ = nh_.advertise<geometry_msgs::PointStamped>(topic_property_->getStdString(), 1, true);
+  pub_ = nh_.advertise<geometry_msgs::PoseStamped>(topic_property_->getStdString(), 1, true);
 }
 
 int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
@@ -194,13 +194,18 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
     if(event.leftUp())
     {
       // Publish a point message upon release of the left mouse button
-      geometry_msgs::PointStamped msg;
+      geometry_msgs::PoseStamped msg;
       msg.header.frame_id = context_->getFixedFrame().toStdString();
       msg.header.stamp = ros::Time::now();
 
-      msg.point.x = static_cast<double>(position.x);
-      msg.point.y = static_cast<double>(position.y);
-      msg.point.z = static_cast<double>(position.z);
+      msg.pose.position.x = static_cast<double>(position.x);
+      msg.pose.position.y = static_cast<double>(position.y);
+      msg.pose.position.z = static_cast<double>(position.z);
+
+      msg.pose.orientation.w = static_cast<double>(q.w);
+      msg.pose.orientation.x = static_cast<double>(q.x);
+      msg.pose.orientation.y = static_cast<double>(q.y);
+      msg.pose.orientation.z = static_cast<double>(q.z);
 
       pub_.publish(msg);
     }
