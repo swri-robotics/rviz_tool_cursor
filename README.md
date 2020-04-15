@@ -1,4 +1,8 @@
 # Rviz Tool Cursor
+
+![](https://github.com/marip8/rviz_tool_cursor/workflows/CI/badge.svg)
+[![license - Apache 2.0](https://img.shields.io/:license-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
+
 An Rviz tool that visualizes a given geometry as the cursor and orients the object normal to objects in the scene. On a click of the left mouse button, the
 tool will publish the point in 3D space of the object on which the cursor rests
 
