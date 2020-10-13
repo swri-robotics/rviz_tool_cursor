@@ -130,22 +130,19 @@ ToolCursor::~ToolCursor()
 
 void ToolCursor::onInitialize()
 {
-  if(cursor_node_ != nullptr)
-  {
-    // Initialize the scene node
-    cursor_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+  // Initialize the scene node
+  cursor_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
-    // Create the visual tool object
-    Ogre::MovableObject* obj = createToolVisualization();
+  // Create the visual tool object
+  Ogre::MovableObject* obj = createToolVisualization();
 
-    // Attach the tool visualization to the scene
-    cursor_node_->attachObject(obj);
-    cursor_node_->setVisible(false);
+  // Attach the tool visualization to the scene
+  cursor_node_->attachObject(obj);
+  cursor_node_->setVisible(false);
 
-    // Set the cursors
-    hit_cursor_ = cursor_;
-    std_cursor_ = rviz::getDefaultCursor();
-  }
+  // Set the cursors
+  hit_cursor_ = cursor_;
+  std_cursor_ = rviz::getDefaultCursor();
 }
 
 void ToolCursor::activate()
@@ -217,7 +214,7 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
 
     // Project the tool visualization onto the ground
     Ogre::Plane plane (Ogre::Vector3::UNIT_Z, 0.0f);
-    rviz::getPointOnPlaneFromWindowXY(event.viewport, plane, event.x, event.y, position);    
+    rviz::getPointOnPlaneFromWindowXY(event.viewport, plane, event.x, event.y, position);
     cursor_node_->setOrientation(1.0f, 0.0f, 0.0f, 0.0f);
     cursor_node_->setPosition(position);
   }
