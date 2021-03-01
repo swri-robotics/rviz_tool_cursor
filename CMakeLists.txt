@@ -9,8 +9,8 @@ cmake_policy(SET CMP0057 NEW)
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rviz_rendering REQUIRED)
 find_package(rviz_common REQUIRED)
+find_package(rviz_rendering REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io geometry)
 #find_package(pcl_ros REQUIRED)
@@ -46,19 +46,14 @@ target_include_directories(${PROJECT_NAME}
   PUBLIC $<INSTALL_INTERFACE:include>)
 target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
   ${PCL_INCLUDE_DIRS})
-ament_target_dependencies(${PROJECT_NAME}
-    rclcpp
-    rviz_common
-    rviz_rendering
-    pluginlib)
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${pluginlib_INCLUDE_DIRS}
+    ${rviz_common_INCLUDE_DIRS}
+    ${rviz_rendering_INCLUDE_DIRS}
 
-ament_export_include_directories(include)
-ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
-ament_export_dependencies(${PROJECT_NAME}
-    rclcpp
-    rviz_common
-    rviz_rendering
-    pluginlib)
+    )
+target_compile_definitions(${PROJECT_NAME} PRIVATE "RVIZ_DEFAULT_PLUGINS_BUILDING_LIBRARY")
+target_compile_definitions(${PROJECT_NAME} PUBLIC "PLUGINLIB__DISABLE_BOOST_FUNCTIONS")
 
 pluginlib_export_plugin_description_file(rviz_common plugin_description.xml)
 
@@ -83,5 +78,13 @@ install(FILES plugin_description.xml
 install(DIRECTORY resources
   DESTINATION share/${PROJECT_NAME}
 )
+
+ament_export_include_directories(include)
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(${PROJECT_NAME}
+    rclcpp
+    rviz_common
+    rviz_rendering
+    pluginlib)
 
 ament_package()
