@@ -26,14 +26,14 @@ qt5_wrap_cpp(MOC_FILES
   src/mesh_tool_cursor.h
 )
 
-add_library(tool_cursor
+add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/rviz_tool_cursor.cpp
   src/${PROJECT_NAME}/get_point_on_plane.cpp
   src/circle_tool_cursor.cpp
   src/mesh_tool_cursor.cpp
   ${MOC_FILES}
 )
-target_link_libraries(tool_cursor
+target_link_libraries(${PROJECT_NAME}
   Qt5::Widgets
   ${rclcpp_LIBRARIES}
   ${rviz_common_LIBRARIES}
@@ -41,22 +41,34 @@ target_link_libraries(tool_cursor
   ${pluginlib_LIBRARIES}
   Eigen3::Eigen
   ${PCL_LIBRARIES})
-target_include_directories(tool_cursor
+target_include_directories(${PROJECT_NAME}
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   PUBLIC $<INSTALL_INTERFACE:include>)
-target_include_directories(tool_cursor SYSTEM PUBLIC
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
   ${PCL_INCLUDE_DIRS})
-ament_target_dependencies(tool_cursor
+ament_target_dependencies(${PROJECT_NAME}
     rclcpp
     rviz_common
     rviz_rendering
     pluginlib)
 
+ament_export_include_directories(include)
+ament_export_targets(${PROJECT_NAME} HAS_LIBRARY_TARGET)
+ament_export_dependencies(${PROJECT_NAME}
+    rclcpp
+    rviz_common
+    rviz_rendering
+    pluginlib)
+
+pluginlib_export_plugin_description_file(rviz_common plugin_description.xml)
+
 # Mark executables and/or libraries for installation
-install(TARGETS tool_cursor
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include
 )
 
 # Mark cpp header files for installation

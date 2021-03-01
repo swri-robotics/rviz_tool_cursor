@@ -164,7 +164,9 @@ void ToolCursor::deactivate()
 
 void ToolCursor::updateTopic()
 {
-//  pub_ = nh_.advertise<geometry_msgs::PoseStamped>(topic_property_->getStdString(), 1, true);
+  rclcpp::Node::SharedPtr raw_node = context_->getRosNodeAbstraction().lock()->get_raw_node();
+  pub_ = raw_node->template create_publisher<geometry_msgs::msg::PoseStamped>(topic_property_->getStdString(), rclcpp::QoS(1));
+  clock_ = raw_node->get_clock();
 }
 
 int ToolCursor::processMouseEvent(rviz_common::ViewportMouseEvent& event)
@@ -182,9 +184,9 @@ int ToolCursor::processMouseEvent(rviz_common::ViewportMouseEvent& event)
   bool got_point = context_->getViewPicker()->get3DPoint(event.panel, event.x, event.y, position);
 
   // TODO: move to public API (private member function)
-//  bool got_patch = context_->getViewPicker()->get3DPatch(event.panel, event.x, event.y, patch_size, patch_size, true, points);
+  bool got_patch = context_->getViewPicker()->get3DPatch(event.panel, event.x, event.y, patch_size, patch_size, true, points);
 
-  bool got_patch = false;
+//  bool got_patch = false;
 
   // Revisualize the cursor node
   cursor_node_->setVisible(true);
@@ -204,7 +206,7 @@ int ToolCursor::processMouseEvent(rviz_common::ViewportMouseEvent& event)
       // Publish a point message upon release of the left mouse button
       auto msg = std::make_unique<geometry_msgs::msg::PoseStamped>();
       msg->header.frame_id = context_->getFixedFrame().toStdString();
-//      msg->header.stamp = ros::Time::now();
+      msg->header.stamp = clock_->now();
 
       msg->pose.position.x = static_cast<double>(position.x);
       msg->pose.position.y = static_cast<double>(position.y);
@@ -215,7 +217,7 @@ int ToolCursor::processMouseEvent(rviz_common::ViewportMouseEvent& event)
       msg->pose.orientation.y = static_cast<double>(q.y);
       msg->pose.orientation.z = static_cast<double>(q.z);
 
-//      pub_.publish(std::move(msg));
+      pub_->publish(std::move(msg));
     }
   }
   else

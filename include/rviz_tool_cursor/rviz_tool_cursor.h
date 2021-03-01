@@ -1,7 +1,8 @@
 #pragma once
 
 #include <rviz_common/tool.hpp>
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/clock.hpp>
+#include <rclcpp/publisher.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 
 namespace Ogre
@@ -66,10 +67,9 @@ protected:
 
   Ogre::MovableObject* movable_obj_;
 
-//  ros::NodeHandle nh_;
-//  rclcpp::Node::SharedPtr node_;
+  rclcpp::Clock::SharedPtr clock_;
 
-//  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_;
 
   rviz_common::properties::StringProperty* topic_property_;
 
