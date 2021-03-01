@@ -1,12 +1,6 @@
-#ifndef RVIZ_TOOL_CURSOR_CIRCLE_TOOL_CURSOR_H
-#define RVIZ_TOOL_CURSOR_CIRCLE_TOOL_CURSOR_H
+#pragma once
 
 #include <rviz_tool_cursor/rviz_tool_cursor.h>
-
-namespace rviz
-{
-  class FloatProperty;
-}
 
 namespace Ogre
 {
@@ -33,11 +27,9 @@ protected:
 
   virtual Ogre::MovableObject* createToolVisualization() override;
 
-  rviz::FloatProperty* radius_property_;
+  rviz_common::properties::FloatProperty* radius_property_;
 
   const std::string object_name_ = "circle_tool_cursor";
 };
 
 } // namespace rviz_tool_cursor
-
-#endif // RVIZ_TOOL_CURSOR_CIRCLE_TOOL_CURSOR_H

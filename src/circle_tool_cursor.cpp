@@ -1,11 +1,12 @@
 #include <OgreManualObject.h>
 #include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 
 #include <pluginlib/class_list_macros.h>
 
-#include <rviz/properties/color_property.h>
-#include <rviz/properties/float_property.h>
+#include <rviz_common/properties/color_property.hpp>
+#include <rviz_common/properties/float_property.hpp>
 
 #include "circle_tool_cursor.h"
 
@@ -17,7 +18,7 @@ namespace rviz_tool_cursor
 CircleToolCursor::CircleToolCursor()
   : ToolCursor()
 {
-  radius_property_ = new rviz::FloatProperty("Tool Radius", 0.210f,
+  radius_property_ = new rviz_common::properties::FloatProperty("Tool Radius", 0.210f,
                                              "The radius of the tool circle display",
                                              getPropertyContainer(), SLOT(updateToolVisualization()), this);
 }
@@ -77,4 +78,4 @@ void CircleToolCursor::updateToolVisualization()
 
 } // namespace rviz_tool_cursor
 
-PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::CircleToolCursor, rviz::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::CircleToolCursor, rviz_common::Tool)

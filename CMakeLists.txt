@@ -5,33 +5,17 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(catkin REQUIRED COMPONENTS
-  rviz
-  pluginlib
-  pcl_ros
-)
+cmake_policy(SET CMP0057 NEW)
+
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rviz_rendering REQUIRED)
+find_package(rviz_common REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common io geometry)
+#find_package(pcl_ros REQUIRED)
 
 find_package(Eigen3 REQUIRED)
-
-catkin_package(
-  INCLUDE_DIRS
-    include
-  LIBRARIES
-    tool_cursor
-  CATKIN_DEPENDS
-    rviz
-    pluginlib
-    pcl_ros
-)
-
-###########
-## Build ##
-###########
-
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
 
 # QT
 find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
@@ -44,40 +28,48 @@ qt5_wrap_cpp(MOC_FILES
 
 add_library(tool_cursor
   src/${PROJECT_NAME}/rviz_tool_cursor.cpp
+  src/${PROJECT_NAME}/get_point_on_plane.cpp
   src/circle_tool_cursor.cpp
   src/mesh_tool_cursor.cpp
   ${MOC_FILES}
 )
 target_link_libraries(tool_cursor
-  ${catkin_LIBRARIES}
   Qt5::Widgets
-)
-
-#############
-## Install ##
-#############
+  ${rclcpp_LIBRARIES}
+  ${rviz_common_LIBRARIES}
+  ${rviz_rendering_LIBRARIES}
+  ${pluginlib_LIBRARIES}
+  Eigen3::Eigen
+  ${PCL_LIBRARIES})
+target_include_directories(tool_cursor
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  PUBLIC $<INSTALL_INTERFACE:include>)
+target_include_directories(tool_cursor SYSTEM PUBLIC
+  ${PCL_INCLUDE_DIRS})
+ament_target_dependencies(tool_cursor
+    rclcpp
+    rviz_common
+    rviz_rendering
+    pluginlib)
 
 # Mark executables and/or libraries for installation
 install(TARGETS tool_cursor
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
 )
 
 # Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+install(DIRECTORY include/
+  DESTINATION include
 )
 
 # Mark other files for installation (e.g. launch and bag files, etc.)
 install(FILES plugin_description.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
 )
 install(DIRECTORY resources
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+  DESTINATION share/${PROJECT_NAME}
 )
 
-#############
-## Testing ##
-#############
-
+ament_package()

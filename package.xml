@@ -9,10 +9,11 @@
 
   <license>Apache 2.0</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <depend>rviz</depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
   <depend>pluginlib</depend>
-  <depend>pcl_ros</depend>
+<!--  <depend>pcl_ros</depend>-->
 
   <export>
     <rviz plugin="${prefix}/plugin_description.xml"/>

@@ -1,9 +1,8 @@
-#ifndef RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
-#define RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
+#pragma once
 
-#include <rviz/tool.h>
-#include <ros/node_handle.h>
-#include <ros/publisher.h>
+#include <rviz_common/tool.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 
 namespace Ogre
 {
@@ -11,17 +10,26 @@ namespace Ogre
   class MovableObject;
 }
 
-namespace rviz
+namespace rviz_common
+{
+  class RenderPanel;
+}
+
+namespace rviz_common
+{
+namespace properties
 {
   class StringProperty;
   class IntProperty;
   class ColorProperty;
+  class FloatProperty;
+}
 }
 
 namespace rviz_tool_cursor
 {
 
-class ToolCursor : public rviz::Tool
+class ToolCursor : public rviz_common::Tool
 {
 Q_OBJECT
 public:
@@ -36,7 +44,7 @@ public:
 
   virtual void deactivate() override;
 
-  virtual int processMouseEvent(rviz::ViewportMouseEvent& event) override;
+  virtual int processMouseEvent(rviz_common::ViewportMouseEvent& event) override;
 
 public Q_SLOTS:
 
@@ -58,17 +66,16 @@ protected:
 
   Ogre::MovableObject* movable_obj_;
 
-  ros::NodeHandle nh_;
+//  ros::NodeHandle nh_;
+//  rclcpp::Node::SharedPtr node_;
 
-  ros::Publisher pub_;
+//  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr pub_;
 
-  rviz::StringProperty* topic_property_;
+  rviz_common::properties::StringProperty* topic_property_;
 
-  rviz::IntProperty* patch_size_property_;
+  rviz_common::properties::IntProperty* patch_size_property_;
 
-  rviz::ColorProperty* color_property_;
+  rviz_common::properties::ColorProperty* color_property_;
 };
 
 } // namespace rviz_tool_cursor
-
-#endif // RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H

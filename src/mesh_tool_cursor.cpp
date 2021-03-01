@@ -1,16 +1,19 @@
 #include <OgreEntity.h>
 #include <OgreSubEntity.h>
+#include <OgreMaterialManager.h>
 #include <OgreMovableObject.h>
 #include <OgreMesh.h>
 #include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
+#include <OgreTechnique.h>
 
 #include <pluginlib/class_list_macros.h>
 
 #include "mesh_tool_cursor.h"
-#include <rviz/properties/string_property.h>
-#include <rviz/properties/color_property.h>
+#include <rviz_common/properties/string_property.hpp>
+#include <rviz_common/properties/color_property.hpp>
 
-#include <rviz/mesh_loader.h>
+#include <rviz_rendering/mesh_loader.hpp>
 
 const static std::string COLOR_NAME = "mesh_cursor_tool_color";
 const static std::string DEFAULT_MESH_RESOURCE = "package://rviz_tool_cursor/resources/default.stl";
@@ -20,7 +23,7 @@ namespace rviz_tool_cursor
 
 MeshToolCursor::MeshToolCursor()
 {
-  mesh_file_ = new rviz::StringProperty("Mesh Filename", QString(DEFAULT_MESH_RESOURCE.c_str()),
+  mesh_file_ = new rviz_common::properties::StringProperty("Mesh Filename", QString(DEFAULT_MESH_RESOURCE.c_str()),
                                          "The mesh resource to display as a cursor",
                                          getPropertyContainer(), SLOT(updateToolVisualization()), this);
 
@@ -45,13 +48,13 @@ MeshToolCursor::~MeshToolCursor()
 Ogre::MovableObject* MeshToolCursor::createToolVisualization()
 {
   // Attempt to load the mesh
-  Ogre::MeshPtr mesh = rviz::loadMeshFromResource(mesh_file_->getStdString());
+  Ogre::MeshPtr mesh = rviz_rendering::loadMeshFromResource(mesh_file_->getStdString());
   if(mesh.isNull())
   {
-    ROS_WARN("Loading default mesh...");
+//    ROS_WARN("Loading default mesh...");
 
     // Load a default mesh
-    mesh = rviz::loadMeshFromResource(DEFAULT_MESH_RESOURCE);
+    mesh = rviz_rendering::loadMeshFromResource(DEFAULT_MESH_RESOURCE);
   }
 
   Ogre::Entity* entity = scene_manager_->createEntity(object_name_, mesh);
@@ -83,4 +86,4 @@ void MeshToolCursor::updateToolVisualization()
 
 } // namespace rviz_tool_cursor
 
-PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::MeshToolCursor, rviz::Tool)
+PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::MeshToolCursor, rviz_common::Tool)

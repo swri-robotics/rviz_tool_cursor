@@ -1,12 +1,11 @@
-#ifndef MESH_TOOL_CURSOR_H
-#define MESH_TOOL_CURSOR_H
-
+#pragma once
 #include <rviz_tool_cursor/rviz_tool_cursor.h>
 #include <OgreMaterial.h>
 
 namespace Ogre
 {
   class Entity;
+  class MovableObject;
 }
 
 namespace rviz_tool_cursor
@@ -29,7 +28,7 @@ protected:
 
   virtual Ogre::MovableObject* createToolVisualization() override;
 
-  rviz::StringProperty* mesh_file_;
+  rviz_common::properties::StringProperty* mesh_file_;
 
   const std::string object_name_ = "mesh_tool_cursor";
 
@@ -37,5 +36,3 @@ protected:
 };
 
 } // namespace rviz_tool_cursor
-
-#endif // MESH_TOOL_CURSOR_H
