@@ -126,8 +126,6 @@ ToolCursor::ToolCursor()
   color_property_ = new rviz_common::properties::ColorProperty("Color", QColor(255, 255, 255),
                                             "The color of the tool visualization",
                                             getPropertyContainer(), SLOT(updateToolVisualization()), this);
-
-  updateTopic();
 }
 
 ToolCursor::~ToolCursor()
@@ -150,6 +148,8 @@ void ToolCursor::onInitialize()
   // Set the cursors
   hit_cursor_ = cursor_;
   std_cursor_ = rviz_common::getDefaultCursor();
+
+  updateTopic();
 }
 
 void ToolCursor::activate()
@@ -185,8 +185,6 @@ int ToolCursor::processMouseEvent(rviz_common::ViewportMouseEvent& event)
 
   // TODO: move to public API (private member function)
   bool got_patch = context_->getViewPicker()->get3DPatch(event.panel, event.x, event.y, patch_size, patch_size, true, points);
-
-//  bool got_patch = false;
 
   // Revisualize the cursor node
   cursor_node_->setVisible(true);

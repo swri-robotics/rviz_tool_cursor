@@ -26,7 +26,7 @@ qt5_wrap_cpp(MOC_FILES
   src/mesh_tool_cursor.h
 )
 
-add_library(${PROJECT_NAME}
+add_library(${PROJECT_NAME} SHARED
   src/${PROJECT_NAME}/rviz_tool_cursor.cpp
   src/${PROJECT_NAME}/get_point_on_plane.cpp
   src/circle_tool_cursor.cpp
