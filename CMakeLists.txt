@@ -8,13 +8,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 cmake_policy(SET CMP0057 NEW)
 
 find_package(ament_cmake REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(PCL REQUIRED COMPONENTS common io geometry)
+find_package(pluginlib REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
-find_package(pluginlib REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common io geometry)
-
-find_package(Eigen3 REQUIRED)
 
 # QT
 find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
