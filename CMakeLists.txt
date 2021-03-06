@@ -13,7 +13,6 @@ find_package(rviz_common REQUIRED)
 find_package(rviz_rendering REQUIRED)
 find_package(pluginlib REQUIRED)
 find_package(PCL REQUIRED COMPONENTS common io geometry)
-#find_package(pcl_ros REQUIRED)
 
 find_package(Eigen3 REQUIRED)
 

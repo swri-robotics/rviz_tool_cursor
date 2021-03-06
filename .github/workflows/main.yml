@@ -2,8 +2,8 @@ name: CI
 
 on:
   push:
-    branches:
-      - master
+#    branches:
+#      - master
   pull_request:
     branches:
       - master
@@ -14,24 +14,12 @@ jobs:
       fail-fast: false
       matrix:
         env:
-          - {CI_NAME: xenial,
-             OS_NAME: ubuntu,
-             OS_CODE_NAME: xenial,
-             ROS_DISTRO: kinetic,
-             ROS_REPO: main,
-             DOCKER_IMAGE: "ros:kinetic"}
-          - {CI_NAME: bionic,
-             OS_NAME: ubuntu,
-             OS_CODE_NAME: bionic,
-             ROS_DISTRO: melodic,
-             ROS_REPO: main,
-             DOCKER_IMAGE: "ros:melodic"}
           - {CI_NAME: focal,
              OS_NAME: ubuntu,
              OS_CODE_NAME: focal,
-             ROS_DISTRO: noetic,
+             ROS_DISTRO: foxy,
              ROS_REPO: main,
-             DOCKER_IMAGE: "ros:noetic"}
+             DOCKER_IMAGE: "ros:foxy"}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
