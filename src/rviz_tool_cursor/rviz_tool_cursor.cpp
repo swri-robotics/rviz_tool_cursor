@@ -17,8 +17,6 @@
 
 #include <Eigen/Dense>
 
-#include <pcl/common/pca.h>
-
 namespace
 {
 
@@ -52,29 +50,25 @@ Eigen::Matrix3f createMatrix(const Eigen::Vector3f& norm)
 Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
                                 const Ogre::Vector3& camera_norm)
 {
-  pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
+  Eigen::MatrixXf data;
+  data.resize(points.size(), 3);
 
   for(std::size_t i = 0; i < points.size(); ++i)
   {
-    pcl::PointXYZ pt;
-    pt.x = points[i].x;
-    pt.y = points[i].y;
-    pt.z = points[i].z;
-
-    cloud->push_back(pt);
+    data.row(i) = Eigen::Map<const Eigen::Vector3f>(points[i].ptr());
   }
 
+  Eigen::MatrixXf centered = data.rowwise() - data.colwise().mean();
+
   // Use principal component analysis to the get eigenvectors
-  pcl::PCA<pcl::PointXYZ> pca;
-  pca.setInputCloud(cloud);
-  Eigen::Matrix3f& evecs = pca.getEigenVectors();
+  Eigen::MatrixXf cov = centered.transpose() * centered;
+  Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> eig(cov);
 
   // Get the eigenvector associated with the smallest eigenvalue
   // (should be Z-axis, assuming points are relatively planar)
-  Eigen::Vector3f norm = evecs.col(2);
+  Eigen::Vector3f norm = eig.eigenvectors().col(0);
   norm.normalize();
 
-  // The
   Eigen::Vector3f camera_normal;
   camera_normal << camera_norm.x, camera_norm.y, camera_norm.z;
   camera_normal.normalize();
@@ -84,7 +78,7 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
     norm *= -1;
   }
 
-  // Create a random orientation matrix with the normal being in the direction of the smalles eigenvector
+  // Create an arbitrary orientation matrix with the normal being in the direction of the smallest eigenvector
   Eigen::Matrix3f mat = createMatrix(norm);
 
   Eigen::Quaternionf q(mat); //Eigen::AngleAxisf(0.0, evecs.col(2)));
