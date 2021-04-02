@@ -10,9 +10,11 @@
   <license>Apache 2.0</license>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <depend>rviz</depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>qtbase5-dev</build_depend>
+  <depend>libqt5-widgets</depend>
   <depend>pluginlib</depend>
-  <depend>pcl_ros</depend>
+  <depend>rviz</depend>
 
   <export>
     <rviz plugin="${prefix}/plugin_description.xml"/>

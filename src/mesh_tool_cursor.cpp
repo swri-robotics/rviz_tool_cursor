@@ -24,7 +24,7 @@ MeshToolCursor::MeshToolCursor()
                                          "The mesh resource to display as a cursor",
                                          getPropertyContainer(), SLOT(updateToolVisualization()), this);
 
-  material_ = Ogre::MaterialManager::getSingletonPtr()->create(COLOR_NAME, "rviz");
+  material_ = Ogre::MaterialManager::getSingletonPtr()->create(COLOR_NAME, Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
   const Ogre::ColourValue& color = color_property_->getOgreColor();
   material_->getTechnique(0)->getPass(0)->setDiffuse(color.r, color.g, color.b, 1.0);

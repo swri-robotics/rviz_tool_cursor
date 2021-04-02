@@ -5,13 +5,22 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(Eigen3 REQUIRED)
+if(NOT TARGET Eigen3::Eigen)
+  if(NOT EIGEN3_INCLUDE_DIRS)
+    set(EIGEN3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+  endif()
+  find_package(Threads REQUIRED)
+  add_library(Eigen3::Eigen IMPORTED INTERFACE)
+  set_property(TARGET Eigen3::Eigen PROPERTY INTERFACE_COMPILE_DEFINITIONS ${EIGEN3_DEFINITIONS})
+  set_property(TARGET Eigen3::Eigen PROPERTY INTERFACE_INCLUDE_DIRECTORIES ${EIGEN3_INCLUDE_DIRS})
+endif()
+
+find_package(Qt5 REQUIRED COMPONENTS Widgets)
 find_package(catkin REQUIRED COMPONENTS
   rviz
   pluginlib
-  pcl_ros
 )
-
-find_package(Eigen3 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS
@@ -21,7 +30,6 @@ catkin_package(
   CATKIN_DEPENDS
     rviz
     pluginlib
-    pcl_ros
 )
 
 ###########
@@ -32,9 +40,6 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
-
-# QT
-find_package(Qt5 ${rviz_QT_VERSION} EXACT REQUIRED Core Widgets)
 
 qt5_wrap_cpp(MOC_FILES
   include/${PROJECT_NAME}/rviz_tool_cursor.h
@@ -51,6 +56,7 @@ add_library(tool_cursor
 target_link_libraries(tool_cursor
   ${catkin_LIBRARIES}
   Qt5::Widgets
+  Eigen3::Eigen
 )
 
 #############

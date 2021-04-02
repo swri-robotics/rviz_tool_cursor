@@ -23,7 +23,7 @@ public:
 
   CircleToolCursor();
 
-  virtual ~CircleToolCursor();
+  virtual ~CircleToolCursor() override;
 
 public Q_SLOTS:
 
