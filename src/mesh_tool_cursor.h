@@ -19,7 +19,7 @@ public:
 
   MeshToolCursor();
 
-  virtual ~MeshToolCursor();
+  virtual ~MeshToolCursor() override;
 
 public Q_SLOTS:
 
