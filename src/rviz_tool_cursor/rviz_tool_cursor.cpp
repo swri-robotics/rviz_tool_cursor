@@ -60,6 +60,8 @@ Eigen::Matrix3f createMatrix(const Eigen::Vector3f& norm)
 Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
                                 const Ogre::Vector3& camera_norm)
 {
+  (void) camera_norm;
+
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ> ());
 
   for(std::size_t i = 0; i < points.size(); ++i)
@@ -76,17 +78,26 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
   pcl::PCA<pcl::PointXYZ> pca;
   pca.setInputCloud(cloud);
   Eigen::Matrix3f& evecs = pca.getEigenVectors();
+  Eigen::Vector3f& evalues = pca.getEigenValues();
 
   // Get the eigenvector associated with the smallest eigenvalue
   // (should be Z-axis, assuming points are relatively planar)
   Eigen::Vector3f norm = evecs.col(2);
   norm.normalize();
 
-  Eigen::Vector3f camera_normal;
-  camera_normal << camera_norm.x, camera_norm.y, camera_norm.z;
-  camera_normal.normalize();
+  // Alternate camera-relative normal vector check that doesn't require the camera vector:
+  // The patch points begin at the top left corner of the patch and end at the bottom right corner.
+  // The vector that goes between these points will point down and to the right relative to the RViz camera frame.
+  pcl::PointXYZ first_pt = cloud->front();
+  pcl::PointXYZ last_pt = cloud->back();
+  Eigen::Vector3f patch_span(last_pt.x - first_pt.x, last_pt.y - first_pt.y, last_pt.z - first_pt.z);
 
-  if(norm.dot(camera_normal) < 0)
+  // This vector (most of the time) points at least a little bit to the right, so its cross product with UnitZ
+  // will have a component pointing out of the screen.
+  Eigen::Vector3f out_vec = patch_span.cross(Eigen::Vector3f::UnitZ());
+
+  // Determine if the norm is pointing into the surface relative to the camera. If not, reverse it.
+  if(norm.dot(out_vec) > 0)
   {
     norm *= -1;
   }
