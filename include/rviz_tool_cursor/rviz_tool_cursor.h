@@ -60,9 +60,13 @@ protected:
 
   ros::NodeHandle nh_;
 
-  ros::Publisher pub_;
+  ros::Publisher pose_pub_;
 
-  rviz::StringProperty* topic_property_;
+  ros::Publisher point_pub_;
+
+  rviz::StringProperty* pose_topic_property_;
+
+  rviz::StringProperty* point_topic_property_;
 
   rviz::IntProperty* patch_size_property_;
 

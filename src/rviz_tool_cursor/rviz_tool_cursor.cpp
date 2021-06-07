@@ -1,4 +1,5 @@
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/PointStamped.h>
 
 #include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
@@ -102,8 +103,12 @@ ToolCursor::ToolCursor()
   shortcut_key_ = 'c';
 
 
-  topic_property_ = new rviz::StringProperty("Topic", "/selection_point",
-                                             "The topic on which to publish points",
+  pose_topic_property_ = new rviz::StringProperty("Pose Topic", "/selection_point",
+                                             "The topic on which to publish pose messages",
+                                             getPropertyContainer(), SLOT(updateTopic()), this);
+
+  point_topic_property_ = new rviz::StringProperty("Point Topic", "/clicked_point",
+                                             "The topic on which to publish point messages",
                                              getPropertyContainer(), SLOT(updateTopic()), this);
 
   patch_size_property_ = new rviz::IntProperty("Patch Size", 10,
@@ -151,7 +156,8 @@ void ToolCursor::deactivate()
 
 void ToolCursor::updateTopic()
 {
-  pub_ = nh_.advertise<geometry_msgs::PoseStamped>(topic_property_->getStdString(), 1, true);
+  pose_pub_ = nh_.advertise<geometry_msgs::PoseStamped>(pose_topic_property_->getStdString(), 1, true);
+  point_pub_ = nh_.advertise<geometry_msgs::PointStamped>(point_topic_property_->getStdString(), 1, true);
 }
 
 int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
@@ -185,20 +191,30 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
     if(event.leftUp())
     {
       // Publish a point message upon release of the left mouse button
-      geometry_msgs::PoseStamped msg;
-      msg.header.frame_id = context_->getFixedFrame().toStdString();
-      msg.header.stamp = ros::Time::now();
+      geometry_msgs::PoseStamped pose_msg;
+      pose_msg.header.frame_id = context_->getFixedFrame().toStdString();
+      pose_msg.header.stamp = ros::Time::now();
 
-      msg.pose.position.x = static_cast<double>(position.x);
-      msg.pose.position.y = static_cast<double>(position.y);
-      msg.pose.position.z = static_cast<double>(position.z);
+      pose_msg.pose.position.x = static_cast<double>(position.x);
+      pose_msg.pose.position.y = static_cast<double>(position.y);
+      pose_msg.pose.position.z = static_cast<double>(position.z);
 
-      msg.pose.orientation.w = static_cast<double>(q.w);
-      msg.pose.orientation.x = static_cast<double>(q.x);
-      msg.pose.orientation.y = static_cast<double>(q.y);
-      msg.pose.orientation.z = static_cast<double>(q.z);
+      pose_msg.pose.orientation.w = static_cast<double>(q.w);
+      pose_msg.pose.orientation.x = static_cast<double>(q.x);
+      pose_msg.pose.orientation.y = static_cast<double>(q.y);
+      pose_msg.pose.orientation.z = static_cast<double>(q.z);
 
-      pub_.publish(msg);
+      pose_pub_.publish(pose_msg);
+
+      geometry_msgs::PointStamped point_msg;
+      point_msg.header.frame_id = context_->getFixedFrame().toStdString();
+      point_msg.header.stamp = ros::Time::now();
+
+      point_msg.point.x = static_cast<double>(position.x);
+      point_msg.point.y = static_cast<double>(position.y);
+      point_msg.point.z = static_cast<double>(position.z);
+
+      point_pub_.publish(point_msg);
     }
   }
   else
