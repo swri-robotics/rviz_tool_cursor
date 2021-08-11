@@ -107,7 +107,7 @@ ToolCursor::ToolCursor()
                                              "The topic on which to publish pose messages",
                                              getPropertyContainer(), SLOT(updateTopic()), this);
 
-  point_topic_property_ = new rviz::StringProperty("Point Topic", "/clicked_point",
+  point_topic_property_ = new rviz::StringProperty("Point Topic", "/tool_cursor_point",
                                              "The topic on which to publish point messages",
                                              getPropertyContainer(), SLOT(updateTopic()), this);
 
