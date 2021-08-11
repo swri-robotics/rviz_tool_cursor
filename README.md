@@ -10,7 +10,9 @@ tool will publish the point in 3D space of the object on which the cursor rests
 
 The base class of the tool cursor has the following properties:
 
-- `Topic`: The topic on which to publish the 3D point in the Rviz environment when the left mouse button is clicked
+- `Pose Topic`: The topic on which to publish the 3D pose in the Rviz environment when the left mouse button is clicked
+- `Point Topic`: The topic on which to publish the 3D point (no orientation) in the Rviz environment when the left mouse button is clicked.
+    - Note: If you want this to match the output of the `Publish Point` tool, you can remap `/tool_cursor_point` to `/clicked_point`.  Alternatively, you can edit this in the `Panels > Tool Properties` menu.
 - `Patch Size`: The number of pixels on a side with which to create a patch used for estimated the surface normal
 - `Color`: The color of the cursor visualization
 
