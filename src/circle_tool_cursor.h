@@ -5,22 +5,20 @@
 
 namespace rviz
 {
-  class FloatProperty;
+class FloatProperty;
 }
 
 namespace Ogre
 {
-  class ManualObject;
+class ManualObject;
 }
 
 namespace rviz_tool_cursor
 {
-
 class CircleToolCursor : public ToolCursor
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   CircleToolCursor();
 
   virtual ~CircleToolCursor() override;
@@ -30,7 +28,6 @@ public Q_SLOTS:
   virtual void updateToolVisualization() override;
 
 protected:
-
   virtual Ogre::MovableObject* createToolVisualization() override;
 
   rviz::FloatProperty* radius_property_;
@@ -38,6 +35,6 @@ protected:
   const std::string object_name_ = "circle_tool_cursor";
 };
 
-} // namespace rviz_tool_cursor
+}  // namespace rviz_tool_cursor
 
-#endif // RVIZ_TOOL_CURSOR_CIRCLE_TOOL_CURSOR_H
+#endif  // RVIZ_TOOL_CURSOR_CIRCLE_TOOL_CURSOR_H

@@ -1,31 +1,29 @@
 #ifndef RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
 #define RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
 
-#include <rviz/tool.h>
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
+#include <rviz/tool.h>
 
 namespace Ogre
 {
-  class SceneNode;
-  class MovableObject;
-}
+class SceneNode;
+class MovableObject;
+}  // namespace Ogre
 
 namespace rviz
 {
-  class StringProperty;
-  class IntProperty;
-  class ColorProperty;
-}
+class StringProperty;
+class IntProperty;
+class ColorProperty;
+}  // namespace rviz
 
 namespace rviz_tool_cursor
 {
-
 class ToolCursor : public rviz::Tool
 {
-Q_OBJECT
+  Q_OBJECT
 public:
-
   ToolCursor();
 
   ~ToolCursor();
@@ -47,7 +45,6 @@ public Q_SLOTS:
   void updatePatchSize();
 
 protected:
-
   virtual Ogre::MovableObject* createToolVisualization() = 0;
 
   QCursor std_cursor_;
@@ -73,6 +70,6 @@ protected:
   rviz::ColorProperty* color_property_;
 };
 
-} // namespace rviz_tool_cursor
+}  // namespace rviz_tool_cursor
 
-#endif // RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
+#endif  // RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
