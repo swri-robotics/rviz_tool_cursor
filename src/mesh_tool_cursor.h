@@ -17,10 +17,6 @@ public Q_SLOTS:
 
 protected:
   virtual Ogre::MovableObject* createToolVisualization() override;
-  std::string getObjectName() const override
-  {
-    return "mesh_tool_cursor";
-  }
 
   rviz::StringProperty* mesh_file_;
   rviz::ColorProperty* color_property_;

@@ -46,10 +46,6 @@ public Q_SLOTS:
   void updateLinesColor();
 
 protected:
-  virtual std::string getObjectName() const
-  {
-    return "tool_cursor";
-  }
   virtual Ogre::MovableObject* createToolVisualization();
   static void updateMaterialColor(Ogre::MaterialPtr material, const QColor& color,
                                   const bool override_self_illumination = true);

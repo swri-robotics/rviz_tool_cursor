@@ -46,7 +46,7 @@ Ogre::MovableObject* MeshToolCursor::createToolVisualization()
     mesh = rviz::loadMeshFromResource(DEFAULT_MESH_RESOURCE);
   }
 
-  Ogre::Entity* entity = scene_manager_->createEntity(getObjectName(), mesh);
+  Ogre::Entity* entity = scene_manager_->createEntity(mesh);
   for (unsigned i = 0; i < entity->getNumSubEntities(); ++i)
   {
     Ogre::SubEntity* sub = entity->getSubEntity(i);

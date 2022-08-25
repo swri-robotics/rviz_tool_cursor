@@ -19,10 +19,6 @@ public:
 
 protected:
   virtual Ogre::MovableObject* createToolVisualization() override;
-  std::string getObjectName() const override
-  {
-    return "circle_tool_cursor";
-  }
 
   rviz::FloatProperty* radius_property_;
   rviz::ColorProperty* color_property_;

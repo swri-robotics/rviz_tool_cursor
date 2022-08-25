@@ -437,7 +437,7 @@ void ToolCursor::updateToolVisualization()
 
 Ogre::MovableObject* ToolCursor::createToolVisualization()
 {
-  return scene_manager_->createManualObject(getObjectName());
+  return scene_manager_->createManualObject();
 }
 
 }  // namespace rviz_tool_cursor

@@ -28,7 +28,7 @@ CircleToolCursor::~CircleToolCursor()
 
 Ogre::MovableObject* CircleToolCursor::createToolVisualization()
 {
-  Ogre::ManualObject* manual = scene_manager_->createManualObject(getObjectName());
+  Ogre::ManualObject* manual = scene_manager_->createManualObject();
 
   // Set the type of manual object
   manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
