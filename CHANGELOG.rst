@@ -2,8 +2,8 @@
 Changelog for package rviz_tool_cursor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2022-08-25)
+------------------
 * Functionality Update (`#20 <https://github.com/marip8/rviz_tool_cursor/issues/20>`_)
   * Simplified polymorphism interface
   * Added base class plugin implementation; updated shortcuts; added icons
