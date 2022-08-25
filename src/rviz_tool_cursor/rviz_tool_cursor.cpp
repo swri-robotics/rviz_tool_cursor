@@ -105,9 +105,6 @@ ToolCursor::ToolCursor() : rviz::Tool()
   patch_size_property_ = new rviz::IntProperty(
       "Patch Size", 10, "The number of pixels with which to estimate the surface normal", getPropertyContainer());
 
-  color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255), "The color of the tool visualization",
-                                            getPropertyContainer(), SLOT(updateToolVisualization()), this);
-
   updateTopic();
 }
 
@@ -225,6 +222,18 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
   }
 
   return rviz::Tool::Render;
+}
+
+void ToolCursor::updateMaterialColor(Ogre::MaterialPtr material, const QColor& color,
+                                     const bool override_self_illumination)
+{
+  qreal r, g, b, a;
+  color.getRgbF(&r, &g, &b, &a);
+  material->setDiffuse(r, g, b, a);
+  material->setSpecular(r, g, b, a);
+  material->setAmbient(r, g, b);
+  if (override_self_illumination)
+    material->setSelfIllumination(r, g, b);
 }
 
 void ToolCursor::updateToolVisualization()

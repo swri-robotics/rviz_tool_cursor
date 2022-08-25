@@ -1,6 +1,7 @@
 #ifndef RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
 #define RVIZ_TOOL_CURSOR_RVIZ_TOOL_CURSOR_H
 
+#include <OgreMaterial.h>
 #include <ros/node_handle.h>
 #include <ros/publisher.h>
 #include <rviz/tool.h>
@@ -37,11 +38,13 @@ public Q_SLOTS:
   void updateToolVisualization();
 
 protected:
-  virtual Ogre::MovableObject* createToolVisualization();
   virtual std::string getObjectName() const
   {
     return "tool_cursor";
   }
+  virtual Ogre::MovableObject* createToolVisualization();
+  static void updateMaterialColor(Ogre::MaterialPtr material, const QColor& color,
+                                  const bool override_self_illumination = true);
 
   QCursor std_cursor_;
   QCursor hit_cursor_;
@@ -56,7 +59,6 @@ protected:
   rviz::StringProperty* pose_topic_property_;
   rviz::StringProperty* point_topic_property_;
   rviz::IntProperty* patch_size_property_;
-  rviz::ColorProperty* color_property_;
 };
 
 }  // namespace rviz_tool_cursor

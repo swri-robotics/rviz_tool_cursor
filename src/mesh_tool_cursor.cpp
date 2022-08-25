@@ -24,10 +24,9 @@ MeshToolCursor::MeshToolCursor()
 
   material_ = Ogre::MaterialManager::getSingletonPtr()->create(COLOR_NAME,
                                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
-  const Ogre::ColourValue& color = color_property_->getOgreColor();
-  material_->getTechnique(0)->getPass(0)->setDiffuse(color.r, color.g, color.b, 1.0);
-  material_->getTechnique(0)->getPass(0)->setAmbient(color.r, color.g, color.b);
+  color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255), "The color of the tool visualization",
+                                            getPropertyContainer(), SLOT(updateColor()), this);
+  updateColor();
 }
 
 MeshToolCursor::~MeshToolCursor()
@@ -55,6 +54,11 @@ Ogre::MovableObject* MeshToolCursor::createToolVisualization()
   }
 
   return entity;
+}
+
+void MeshToolCursor::updateColor()
+{
+  updateMaterialColor(material_, color_property_->getColor(), false);
 }
 
 }  // namespace rviz_tool_cursor

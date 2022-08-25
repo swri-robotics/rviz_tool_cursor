@@ -25,6 +25,7 @@ protected:
   }
 
   rviz::FloatProperty* radius_property_;
+  rviz::ColorProperty* color_property_;
 };
 
 }  // namespace rviz_tool_cursor
