@@ -1,33 +1,28 @@
-#include <geometry_msgs/PoseStamped.h>
-#include <geometry_msgs/PointStamped.h>
-
 #include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
-
+#include <geometry_msgs/PointStamped.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <rviz/display_context.h>
-#include <rviz/load_resource.h>
 #include <rviz/geometry.h>
-#include <rviz/viewport_mouse_event.h>
-#include <rviz/selection/selection_manager.h>
-
+#include <rviz/load_resource.h>
 #include <rviz/properties/color_property.h>
 #include <rviz/properties/int_property.h>
 #include <rviz/properties/string_property.h>
-
+#include <rviz/selection/selection_manager.h>
+#include <rviz/viewport_mouse_event.h>
 #include <rviz_tool_cursor/rviz_tool_cursor.h>
 
 #include <Eigen/Dense>
 
 namespace
 {
-
 Eigen::Matrix3f createMatrix(const Eigen::Vector3f& norm)
 {
-  Eigen::Matrix3f mat (Eigen::Matrix3f::Identity());
+  Eigen::Matrix3f mat(Eigen::Matrix3f::Identity());
   mat.col(2) = norm;
 
   // Create plane from point normal
-  Eigen::Hyperplane<float, 3> plane (norm, Eigen::Vector3f(0, 0, 0));
+  Eigen::Hyperplane<float, 3> plane(norm, Eigen::Vector3f(0, 0, 0));
 
   // If the normal and global x-axis are not closely aligned
   if (std::abs(norm.dot(Eigen::Vector3f::UnitX())) < 0.90f)
@@ -48,13 +43,12 @@ Eigen::Matrix3f createMatrix(const Eigen::Vector3f& norm)
   return mat;
 }
 
-Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
-                                const Ogre::Vector3& camera_norm)
+Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points, const Ogre::Vector3& camera_norm)
 {
   Eigen::MatrixXf data;
   data.resize(points.size(), 3);
 
-  for(std::size_t i = 0; i < points.size(); ++i)
+  for (std::size_t i = 0; i < points.size(); ++i)
   {
     data.row(i) = Eigen::Map<const Eigen::Vector3f>(points[i].ptr());
   }
@@ -74,7 +68,7 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
   camera_normal << camera_norm.x, camera_norm.y, camera_norm.z;
   camera_normal.normalize();
 
-  if(norm.dot(camera_normal) < 0)
+  if (norm.dot(camera_normal) < 0)
   {
     norm *= -1;
   }
@@ -82,7 +76,7 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
   // Create an arbitrary orientation matrix with the normal being in the direction of the smallest eigenvector
   Eigen::Matrix3f mat = createMatrix(norm);
 
-  Eigen::Quaternionf q(mat); //Eigen::AngleAxisf(0.0, evecs.col(2)));
+  Eigen::Quaternionf q(mat);  // Eigen::AngleAxisf(0.0, evecs.col(2)));
   Ogre::Quaternion out;
   out.w = q.w();
   out.x = q.x();
@@ -92,31 +86,26 @@ Ogre::Quaternion estimateNormal(const std::vector<Ogre::Vector3>& points,
   return out;
 }
 
-} // namepsace anonymous
+}  // namespace
 
 namespace rviz_tool_cursor
 {
-
-ToolCursor::ToolCursor()
-  : rviz::Tool()
+ToolCursor::ToolCursor() : rviz::Tool()
 {
   shortcut_key_ = 'c';
 
+  pose_topic_property_ =
+      new rviz::StringProperty("Pose Topic", "/selection_point", "The topic on which to publish pose messages",
+                               getPropertyContainer(), SLOT(updateTopic()), this);
 
-  pose_topic_property_ = new rviz::StringProperty("Pose Topic", "/selection_point",
-                                             "The topic on which to publish pose messages",
-                                             getPropertyContainer(), SLOT(updateTopic()), this);
+  point_topic_property_ =
+      new rviz::StringProperty("Point Topic", "/tool_cursor_point", "The topic on which to publish point messages",
+                               getPropertyContainer(), SLOT(updateTopic()), this);
 
-  point_topic_property_ = new rviz::StringProperty("Point Topic", "/tool_cursor_point",
-                                             "The topic on which to publish point messages",
-                                             getPropertyContainer(), SLOT(updateTopic()), this);
+  patch_size_property_ = new rviz::IntProperty(
+      "Patch Size", 10, "The number of pixels with which to estimate the surface normal", getPropertyContainer());
 
-  patch_size_property_ = new rviz::IntProperty("Patch Size", 10,
-                                               "The number of pixels with which to estimate the surface normal",
-                                               getPropertyContainer());
-
-  color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255),
-                                            "The color of the tool visualization",
+  color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255), "The color of the tool visualization",
                                             getPropertyContainer(), SLOT(updateToolVisualization()), this);
 
   updateTopic();
@@ -124,7 +113,6 @@ ToolCursor::ToolCursor()
 
 ToolCursor::~ToolCursor()
 {
-
 }
 
 void ToolCursor::onInitialize()
@@ -169,16 +157,18 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
 
   const unsigned patch_size = static_cast<unsigned>(patch_size_property_->getInt());
 
-  // Set the visibility of this node off so the selection manager won't choose a point on our cursor mesh in the point and patch
+  // Set the visibility of this node off so the selection manager won't choose a point on our cursor mesh in the point
+  // and patch
   cursor_node_->setVisible(false);
 
   bool got_point = context_->getSelectionManager()->get3DPoint(event.viewport, event.x, event.y, position);
-  bool got_patch = context_->getSelectionManager()->get3DPatch(event.viewport, event.x, event.y, patch_size, patch_size, true, points);
+  bool got_patch = context_->getSelectionManager()->get3DPatch(event.viewport, event.x, event.y, patch_size, patch_size,
+                                                               true, points);
 
   // Revisualize the cursor node
   cursor_node_->setVisible(true);
 
-  if(got_point && got_patch && points.size() > 3)
+  if (got_point && got_patch && points.size() > 3)
   {
     // Set the cursor
     rviz::Tool::setCursor(hit_cursor_);
@@ -188,7 +178,7 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
     cursor_node_->setOrientation(q);
     cursor_node_->setPosition(position);
 
-    if(event.leftUp())
+    if (event.leftUp())
     {
       // Publish a point message upon release of the left mouse button
       geometry_msgs::PoseStamped pose_msg;
@@ -223,7 +213,7 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
     rviz::Tool::setCursor(std_cursor_);
 
     // Project the tool visualization onto the ground
-    Ogre::Plane plane (Ogre::Vector3::UNIT_Z, 0.0f);
+    Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0.0f);
     rviz::getPointOnPlaneFromWindowXY(event.viewport, plane, event.x, event.y, position);
     cursor_node_->setOrientation(1.0f, 0.0f, 0.0f, 0.0f);
     cursor_node_->setPosition(position);
@@ -232,4 +222,4 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
   return rviz::Tool::Render;
 }
 
-} // namespace rviz_tool_cursor
+}  // namespace rviz_tool_cursor
