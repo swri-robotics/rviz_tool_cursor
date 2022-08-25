@@ -6,7 +6,7 @@
 An Rviz tool that visualizes a given geometry as the cursor and orients the object normal to objects in the scene. On a click of the left mouse button, the
 tool will publish the point in 3D space of the object on which the cursor rests
 
-![Mesh tool cursor](mesh_tool_cursor.gif)
+![Mesh tool cursor](docs/mesh_tool_cursor.gif)
 
 The base class of the tool cursor has the following properties:
 
