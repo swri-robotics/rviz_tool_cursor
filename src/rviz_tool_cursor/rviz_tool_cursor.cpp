@@ -1,4 +1,4 @@
-#include <OgreMovableObject.h>
+#include <OgreManualObject.h>
 #include <OgreSceneManager.h>
 #include <geometry_msgs/PointStamped.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -113,6 +113,11 @@ ToolCursor::ToolCursor() : rviz::Tool()
 
 ToolCursor::~ToolCursor()
 {
+  if (cursor_node_->getParentSceneNode())
+    cursor_node_->getParentSceneNode()->removeChild(cursor_node_);
+  scene_manager_->destroySceneNode(cursor_node_);
+
+  scene_manager_->destroyMovableObject(cursor_object_);
 }
 
 void ToolCursor::onInitialize()
@@ -121,10 +126,10 @@ void ToolCursor::onInitialize()
   cursor_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 
   // Create the visual tool object
-  Ogre::MovableObject* obj = createToolVisualization();
+  cursor_object_ = createToolVisualization();
 
   // Attach the tool visualization to the scene
-  cursor_node_->attachObject(obj);
+  cursor_node_->attachObject(cursor_object_);
   cursor_node_->setVisible(false);
 
   // Set the cursors
@@ -220,6 +225,24 @@ int ToolCursor::processMouseEvent(rviz::ViewportMouseEvent& event)
   }
 
   return rviz::Tool::Render;
+}
+
+void ToolCursor::updateToolVisualization()
+{
+  // Remove and destroy the first tool visualization from the scene node
+  scene_manager_->destroyMovableObject(cursor_object_);
+
+  // Create the new tool visualization
+  cursor_object_ = createToolVisualization();
+
+  // Attach the new tool visualization to the scene node
+  cursor_node_->attachObject(cursor_object_);
+  cursor_node_->setVisible(false);
+}
+
+Ogre::MovableObject* ToolCursor::createToolVisualization()
+{
+  return scene_manager_->createManualObject(getObjectName());
 }
 
 }  // namespace rviz_tool_cursor

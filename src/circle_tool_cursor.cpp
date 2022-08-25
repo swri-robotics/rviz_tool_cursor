@@ -1,9 +1,7 @@
 #include "circle_tool_cursor.h"
 
 #include <OgreManualObject.h>
-#include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
-#include <pluginlib/class_list_macros.h>
 #include <rviz/properties/color_property.h>
 #include <rviz/properties/float_property.h>
 
@@ -19,17 +17,11 @@ CircleToolCursor::CircleToolCursor() : ToolCursor()
 
 CircleToolCursor::~CircleToolCursor()
 {
-  if (cursor_node_ != nullptr)
-  {
-    cursor_node_->detachObject(object_name_);
-    scene_manager_->destroyManualObject(object_name_);
-    scene_manager_->destroySceneNode(cursor_node_);
-  }
 }
 
 Ogre::MovableObject* CircleToolCursor::createToolVisualization()
 {
-  Ogre::ManualObject* manual = scene_manager_->createManualObject(object_name_);
+  Ogre::ManualObject* manual = scene_manager_->createManualObject(getObjectName());
 
   // Set the type of manual object
   manual->begin("BaseWhiteNoLighting", Ogre::RenderOperation::OT_LINE_STRIP);
@@ -56,20 +48,7 @@ Ogre::MovableObject* CircleToolCursor::createToolVisualization()
   return manual;
 }
 
-void CircleToolCursor::updateToolVisualization()
-{
-  // Remove and destroy the first tool visualization from the scene node
-  cursor_node_->detachObject(object_name_);
-  scene_manager_->destroyManualObject(object_name_);
-
-  // Create a new tool visualization
-  movable_obj_ = createToolVisualization();
-
-  // Attach the new tool visualization to the scene node
-  cursor_node_->attachObject(movable_obj_);
-  cursor_node_->setVisible(false);
-}
-
 }  // namespace rviz_tool_cursor
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::CircleToolCursor, rviz::Tool)
