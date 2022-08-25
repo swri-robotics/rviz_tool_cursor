@@ -5,7 +5,6 @@
 #include <OgreMovableObject.h>
 #include <OgreSceneManager.h>
 #include <OgreSubEntity.h>
-#include <pluginlib/class_list_macros.h>
 #include <rviz/mesh_loader.h>
 #include <rviz/properties/color_property.h>
 #include <rviz/properties/string_property.h>
@@ -17,26 +16,21 @@ namespace rviz_tool_cursor
 {
 MeshToolCursor::MeshToolCursor()
 {
+  shortcut_key_ = 'm';
+
   mesh_file_ = new rviz::StringProperty("Mesh Filename", QString(DEFAULT_MESH_RESOURCE.c_str()),
                                         "The mesh resource to display as a cursor", getPropertyContainer(),
                                         SLOT(updateToolVisualization()), this);
 
   material_ = Ogre::MaterialManager::getSingletonPtr()->create(COLOR_NAME,
                                                                Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
-  const Ogre::ColourValue& color = color_property_->getOgreColor();
-  material_->getTechnique(0)->getPass(0)->setDiffuse(color.r, color.g, color.b, 1.0);
-  material_->getTechnique(0)->getPass(0)->setAmbient(color.r, color.g, color.b);
+  color_property_ = new rviz::ColorProperty("Color", QColor(255, 255, 255), "The color of the tool visualization",
+                                            getPropertyContainer(), SLOT(updateColor()), this);
+  updateColor();
 }
 
 MeshToolCursor::~MeshToolCursor()
 {
-  if (cursor_node_ != nullptr)
-  {
-    cursor_node_->detachObject(object_name_);
-    scene_manager_->destroyEntity(object_name_);
-    scene_manager_->destroySceneNode(cursor_node_);
-  }
   Ogre::MaterialManager::getSingletonPtr()->remove(COLOR_NAME);
 }
 
@@ -52,7 +46,7 @@ Ogre::MovableObject* MeshToolCursor::createToolVisualization()
     mesh = rviz::loadMeshFromResource(DEFAULT_MESH_RESOURCE);
   }
 
-  Ogre::Entity* entity = scene_manager_->createEntity(object_name_, mesh);
+  Ogre::Entity* entity = scene_manager_->createEntity(mesh);
   for (unsigned i = 0; i < entity->getNumSubEntities(); ++i)
   {
     Ogre::SubEntity* sub = entity->getSubEntity(i);
@@ -62,23 +56,12 @@ Ogre::MovableObject* MeshToolCursor::createToolVisualization()
   return entity;
 }
 
-void MeshToolCursor::updateToolVisualization()
+void MeshToolCursor::updateColor()
 {
-  const Ogre::ColourValue& color = color_property_->getOgreColor();
-  material_->getTechnique(0)->getPass(0)->setDiffuse(color.r, color.g, color.b, 1.0);
-  material_->getTechnique(0)->getPass(0)->setAmbient(color.r, color.g, color.b);
-
-  // Remove and destroy the first tool visualization from the scene node
-  scene_manager_->destroyEntity(object_name_);
-
-  // Create a new tool visualization
-  movable_obj_ = createToolVisualization();
-
-  // Attach the new tool visualization to the scene node
-  cursor_node_->attachObject(movable_obj_);
-  cursor_node_->setVisible(false);
+  updateMaterialColor(material_, color_property_->getColor(), false);
 }
 
 }  // namespace rviz_tool_cursor
 
+#include <pluginlib/class_list_macros.h>
 PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::MeshToolCursor, rviz::Tool)
