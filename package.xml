@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>rviz_tool_cursor</name>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
   <description>The rviz_tool_cursor package</description>
 
   <maintainer email="michael.ripperger@swri.org">Michael Ripperger</maintainer>
