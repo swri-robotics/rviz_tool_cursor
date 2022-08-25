@@ -2,8 +2,8 @@
 Changelog for package rviz_tool_cursor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.1.4 (2022-08-25)
+------------------
 * CI and Formatting Updates (`#19 <https://github.com/marip8/rviz_tool_cursor/issues/19>`_)
   * Added formatting files and scripts
   * Ran clang formatting
