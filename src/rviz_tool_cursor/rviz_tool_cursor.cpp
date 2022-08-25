@@ -92,7 +92,7 @@ namespace rviz_tool_cursor
 {
 ToolCursor::ToolCursor() : rviz::Tool()
 {
-  shortcut_key_ = 'c';
+  shortcut_key_ = 't';
 
   pose_topic_property_ =
       new rviz::StringProperty("Pose Topic", "/selection_point", "The topic on which to publish pose messages",
@@ -246,3 +246,6 @@ Ogre::MovableObject* ToolCursor::createToolVisualization()
 }
 
 }  // namespace rviz_tool_cursor
+
+#include <pluginlib/class_list_macros.h>
+PLUGINLIB_EXPORT_CLASS(rviz_tool_cursor::ToolCursor, rviz::Tool)

@@ -16,6 +16,8 @@ namespace rviz_tool_cursor
 {
 MeshToolCursor::MeshToolCursor()
 {
+  shortcut_key_ = 'm';
+
   mesh_file_ = new rviz::StringProperty("Mesh Filename", QString(DEFAULT_MESH_RESOURCE.c_str()),
                                         "The mesh resource to display as a cursor", getPropertyContainer(),
                                         SLOT(updateToolVisualization()), this);
