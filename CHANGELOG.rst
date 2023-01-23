@@ -2,8 +2,8 @@
 Changelog for package rviz_tool_cursor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.1 (2023-01-23)
+------------------
 * Added install of icons directory (`#21 <https://github.com/marip8/rviz_tool_cursor/issues/21>`_)
 * Contributors: Michael Ripperger
 
