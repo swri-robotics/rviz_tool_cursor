@@ -68,7 +68,7 @@ install(DIRECTORY include/${PROJECT_NAME}/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_
 
 # Mark other files for installation (e.g. launch and bag files, etc.)
 install(FILES plugin_description.xml DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
-install(DIRECTORY resources DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+install(DIRECTORY resources icons DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 # ######################################################################################################################
 # Testing ##
